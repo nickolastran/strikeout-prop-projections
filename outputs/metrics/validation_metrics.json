@@ -1,0 +1,52 @@
+{
+  "target": "k_per_9",
+  "n_features": 23,
+  "features": [
+    "pitches",
+    "tbf",
+    "games",
+    "velo_avg",
+    "velo_max",
+    "spin_avg",
+    "hbreak_avg",
+    "vbreak_avg",
+    "extension_avg",
+    "release_consistency",
+    "whiff_rate",
+    "chase_rate",
+    "z_contact_rate",
+    "csw_rate",
+    "ip",
+    "ip_per_game",
+    "k9_last14d",
+    "whiff_last14d",
+    "kpct_last14d",
+    "k9_last30d",
+    "whiff_last30d",
+    "kpct_last30d",
+    "k_pct"
+  ],
+  "train_metrics": {
+    "rmse": 6.448355432690326,
+    "mae": 5.054874725251837,
+    "r2": 0.09939644159871641,
+    "n": 183
+  },
+  "valid_metrics": {
+    "rmse": 6.193719004492845,
+    "mae": 4.750099664759691,
+    "r2": -0.005510808574211934,
+    "n": 321
+  },
+  "overfit_report": {
+    "train_rmse": 6.448355432690326,
+    "valid_rmse": 6.193719004492845,
+    "gap": -0.25463642819748067,
+    "ratio": 0.9605114155298285,
+    "overfitting": false,
+    "guidance": [
+      "Train/validation gap within tolerance \u2014 no overfitting flagged."
+    ]
+  },
+  "best_iteration": 9
+}
