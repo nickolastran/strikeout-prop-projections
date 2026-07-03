@@ -14,8 +14,9 @@ src/
   features.py        # STAGE 2: pitch -> pitcher feature engineering + target
   train.py           # STAGE 3: temporal split, XGBoost, overfitting diagnostics
   explain.py         # STAGE 4: SHAP global + per-pitcher (Skubal / Skenes)
+  daily_projections.py  # per-start K-prop board (standalone, see below)
 data/raw|processed/  # cached parquet
-outputs/models|metrics|figures/
+outputs/models|metrics|figures|projections/
 ```
 
 ## Quick start
@@ -76,4 +77,38 @@ trees, feature pruning by SHAP) when the gap is large.
 `explain.py` writes a global SHAP beeswarm (`outputs/figures/shap_global_summary.png`)
 and per-pitcher waterfall plots for Tarik Skubal and Paul Skenes, attributing each
 ace's predicted K/9 to individual features.
+
+## Strikeout projections (daily K-prop board)
+
+`src/daily_projections.py` is a **standalone** step — it does *not* run as part of
+`main.py`. It produces the per-start strikeout board (`outputs/projections/`): for
+every probable starter on a given date it reports the probability of clearing each
+threshold from **1+ K through 12+ K**.
+
+```bash
+# produce the projections output for a specific date (YYYY-MM-DD)
+python -m src.daily_projections 2026-06-25
+
+# omit the date to use config.AS_OF_DATE
+python -m src.daily_projections
 ```
+
+This will:
+
+1. Build per-pitcher season rate profiles (K% and batters-faced-per-start) from
+   the cached Statcast data (pulled via `src.ingest` — no separate download).
+2. Fetch the day's probable starters + opponents from the MLB StatsAPI and resolve
+   each to an MLBAM id.
+3. Model each start as `SO ~ Binomial(n = expected batters faced, p = season K%)`
+   and compute `Prob(j+ K) = binom.sf(j-1, n, p)` for every threshold. Pitchers
+   without enough season sample (≥20 batters faced) fall back to league averages.
+4. Print the ranked board and write two files:
+
+| Output | Path |
+|--------|------|
+| CSV (raw probabilities) | `outputs/projections/strikeouts_<date>.csv` |
+| Styled HTML (green-gradient board) | `outputs/projections/strikeouts_<date>.html` |
+
+> **Prerequisite:** the Statcast cache must exist. Run `python main.py` (or set
+> `SMOKE_TEST = False` and run `python main.py --force` for a full-season profile)
+> at least once so `src.ingest` has data to build rate profiles from.
