@@ -1,0 +1,32 @@
+,Pitcher,Team,Opponent,Exp K Rate,Exp BF,1+ K,2+ K,3+ K,4+ K,5+ K,6+ K,7+ K,8+ K,9+ K,10+ K,11+ K,12+ K
+1,Matthew Boyd #16,Chicago Cubs,Minnesota Twins,0.5,20.0,1.0,1.0,1.0,0.999,0.994,0.979,0.942,0.868,0.748,0.588,0.412,0.252
+2,Jesús Luzardo #44,Philadelphia Phillies,New York Mets,0.404,23.5,1.0,1.0,0.999,0.997,0.988,0.963,0.911,0.819,0.687,0.528,0.366,0.226
+3,MacKenzie Gore #1,Texas Rangers,Atlanta Braves,0.365,21.0,1.0,0.999,0.994,0.976,0.929,0.837,0.696,0.522,0.347,0.201,0.101,0.043
+4,Gavin Williams #32,Cleveland Guardians,Pittsburgh Pirates,0.328,22.3,1.0,0.998,0.989,0.961,0.895,0.78,0.619,0.44,0.276,0.151,0.071,0.029
+5,Ryan Weathers #40,New York Yankees,Los Angeles Dodgers,0.296,23.7,1.0,0.998,0.987,0.954,0.88,0.757,0.594,0.417,0.26,0.142,0.068,0.028
+6,Taj Bradley #26,Minnesota Twins,Chicago Cubs,0.27,24.7,1.0,0.996,0.98,0.936,0.846,0.705,0.532,0.358,0.212,0.111,0.051,0.02
+7,Tarik Skubal #29,Detroit Tigers,Los Angeles Angels,0.233,24.3,0.998,0.986,0.942,0.844,0.689,0.499,0.318,0.176,0.084,0.035,0.013,0.004
+8,Max Meyer #23,Miami Marlins,Milwaukee Brewers,0.231,21.7,0.997,0.976,0.912,0.782,0.598,0.398,0.229,0.113,0.048,0.017,0.005,0.001
+9,Trevor Rogers #28,Baltimore Orioles,Houston Astros,0.208,24.0,0.996,0.973,0.903,0.767,0.58,0.383,0.219,0.108,0.046,0.017,0.005,0.001
+10,Spencer Arrighetti #41,Houston Astros,Baltimore Orioles,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+11,Randy Dobnak #62,Kansas City Royals,San Diego Padres,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+12,Griffin Canning #17,San Diego Padres,Kansas City Royals,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+13,Shane Bieber #57,Toronto Blue Jays,Chicago White Sox,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+14,Logan Allen #26,Cleveland Guardians,Pittsburgh Pirates,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+15,Jared Jones #17,Pittsburgh Pirates,Cleveland Guardians,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+16,Shane Drohan #55,Milwaukee Brewers,Miami Marlins,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+17,Grayson Rodriguez #21,Los Angeles Angels,Detroit Tigers,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+18,Patrick Sandoval #43,Boston Red Sox,Tampa Bay Rays,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+19,Owen Murphy #73,Atlanta Braves,Texas Rangers,0.219,22.3,0.996,0.969,0.89,0.743,0.546,0.348,0.19,0.088,0.035,0.012,0.003,0.001
+20,Zack Littell #18,Washington Nationals,Athletics,0.209,21.5,0.994,0.961,0.869,0.706,0.501,0.306,0.159,0.071,0.027,0.009,0.002,0.001
+21,Logan Webb #62,San Francisco Giants,Seattle Mariners,0.167,27.0,0.993,0.953,0.851,0.681,0.476,0.288,0.15,0.068,0.026,0.009,0.003,0.001
+22,Davis Martin #65,Chicago White Sox,Toronto Blue Jays,0.184,24.5,0.992,0.951,0.844,0.667,0.458,0.27,0.136,0.059,0.022,0.007,0.002,0.0
+23,Tomoyuki Sugano #11,Colorado Rockies,Cincinnati Reds,0.178,22.5,0.987,0.922,0.777,0.567,0.351,0.184,0.081,0.03,0.009,0.003,0.001,0.0
+24,Dustin May #3,St. Louis Cardinals,Arizona Diamondbacks,0.19,21.0,0.988,0.93,0.792,0.587,0.37,0.197,0.088,0.033,0.01,0.003,0.001,0.0
+25,Brandon Pfaadt #32,Arizona Diamondbacks,St. Louis Cardinals,0.163,24.5,0.986,0.921,0.775,0.567,0.353,0.186,0.083,0.032,0.01,0.003,0.001,0.0
+26,Emmet Sheehan #80,Los Angeles Dodgers,New York Yankees,0.163,24.5,0.986,0.921,0.775,0.567,0.353,0.186,0.083,0.032,0.01,0.003,0.001,0.0
+27,Bryan Woo #22,Seattle Mariners,San Francisco Giants,0.149,24.7,0.982,0.904,0.74,0.521,0.311,0.157,0.067,0.024,0.008,0.002,0.0,0.0
+28,Rhett Lowder #25,Cincinnati Reds,Colorado Rockies,0.125,24.0,0.959,0.82,0.592,0.352,0.173,0.07,0.024,0.007,0.002,0.0,0.0,0.0
+29,Sean Manaea #59,New York Mets,Philadelphia Phillies,0.182,14.7,0.951,0.786,0.531,0.285,0.121,0.04,0.011,0.002,0.0,0.0,0.0,0.0
+30,J.T. Ginn #35,Athletics,Washington Nationals,0.2,10.0,0.893,0.624,0.322,0.121,0.033,0.006,0.001,0.0,0.0,0.0,0.0,0.0
+31,Ian Seymour #61,Tampa Bay Rays,Boston Red Sox,0.35,5.0,0.884,0.572,0.235,0.054,0.005,0.0,0.0,0.0,0.0,0.0,0.0,0.0

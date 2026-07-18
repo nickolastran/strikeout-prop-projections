@@ -44,8 +44,9 @@ from src.features import _pitch_flags
 
 warnings.filterwarnings("ignore")
 
-# Strikeout thresholds to report (columns "Prob 1+ K" ... "Prob 12+ K").
+# Strikeout thresholds to report (columns "1+ K" ... "12+ K").
 THRESHOLDS = list(range(1, 13))
+PROB_COLS = [f"{j}+ K" for j in THRESHOLDS]
 OUT_DIR = config.ROOT / "outputs" / "projections"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -97,14 +98,15 @@ def get_slate(date_iso: str) -> pd.DataFrame:
                 "opponent": gm.get(f"{opp_side}_name"),
             })
 
-    # Resolve MLBAM ids (cache lookups to avoid duplicate API calls).
-    id_cache: dict[str, int | None] = {}
+    # Resolve MLBAM ids + jersey numbers (cache lookups to avoid duplicate calls).
+    id_cache: dict[str, tuple[int | None, str]] = {}
     for r in rows:
         nm = r["pitcher_name"]
         if nm not in id_cache:
             hits = statsapi.lookup_player(nm)
-            id_cache[nm] = int(hits[0]["id"]) if hits else None
-        r["pitcher"] = id_cache[nm]
+            id_cache[nm] = ((int(hits[0]["id"]), hits[0].get("primaryNumber", ""))
+                            if hits else (None, ""))
+        r["pitcher"], r["number"] = id_cache[nm]
     return pd.DataFrame(rows)
 
 
@@ -150,16 +152,17 @@ def project(date_iso: str, df: pd.DataFrame | None = None) -> pd.DataFrame:
             k_rate, bf, src = lg_k_rate, lg_bf, "lg_avg"  # insufficient sample
 
         probs = threshold_probs(k_rate, bf)
+        num = r.get("number") or ""
         rec = {
-            "Pitcher": r["pitcher_name"],
+            "Pitcher": f"{r['pitcher_name']} #{num}" if num else r["pitcher_name"],
             "Team": r["team"],
             "Opponent": r["opponent"],
-            "Expected K Rate": round(k_rate, 3),
-            "Expected Batters Faced": round(bf, 1),
+            "Exp K Rate": round(k_rate, 3),
+            "Exp BF": round(bf, 1),
             "_exp_k": k_rate * bf,        # for sorting
             "_src": src,
         }
-        rec.update({f"Prob {j}+ K": probs[j] for j in THRESHOLDS})
+        rec.update({f"{j}+ K": round(probs[j], 3) for j in THRESHOLDS})
         records.append(rec)
 
     board = (pd.DataFrame(records)
@@ -174,13 +177,21 @@ def project(date_iso: str, df: pd.DataFrame | None = None) -> pd.DataFrame:
 # ----------------------------------------------------------------------------
 def _styled(board: pd.DataFrame):
     """Green-gradient styled HTML table matching the reference look."""
-    prob_cols = [f"Prob {j}+ K" for j in THRESHOLDS]
-    show = board.drop(columns=["_exp_k", "_src"])
+    # Rank as a plain "#" column beside the pitcher (not a pandas index).
+    show = board.drop(columns=["_exp_k", "_src"]).reset_index(names="#")
     sty = (show.style
-           .format({c: "{:.3f}" for c in prob_cols})
-           .format({"Expected K Rate": "{:.3f}", "Expected Batters Faced": "{:.1f}"})
-           .background_gradient(cmap="Greens", subset=prob_cols, vmin=0, vmax=1)
-           .set_caption("Projected Starting Pitcher Strikeouts"))
+           .hide(axis="index")
+           .format({c: "{:.3f}" for c in PROB_COLS})
+           .format({"Exp K Rate": "{:.3f}", "Exp BF": "{:.1f}"})
+           .background_gradient(cmap="Greens", subset=PROB_COLS, vmin=0, vmax=1)
+           .set_caption("Projected Starting Pitcher Strikeouts")
+           .set_table_attributes('style="border-collapse:collapse; width:100%; '
+                                 'table-layout:auto; font-size:12px"')
+           .set_table_styles([
+               {"selector": "th, td",
+                "props": "text-align:center; padding:4px 5px; "
+                         "border:1px solid #bbb;"},
+           ]))
     return sty
 
 
@@ -198,9 +209,8 @@ def run(date_iso: str, df: pd.DataFrame | None = None) -> pd.DataFrame:
         return board
     csv_path, html_path = save(board, date_iso)
 
-    prob_cols = [f"Prob {j}+ K" for j in THRESHOLDS]
     disp = board.drop(columns=["_exp_k", "_src"]).copy()
-    for c in prob_cols + ["Expected K Rate"]:
+    for c in PROB_COLS + ["Exp K Rate"]:
         disp[c] = disp[c].map(lambda v: f"{v:.3f}")
     pd.set_option("display.max_columns", None, "display.width", 250)
     print(disp.to_string())
