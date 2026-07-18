@@ -44,9 +44,9 @@ from src.features import _pitch_flags
 
 warnings.filterwarnings("ignore")
 
-# Strikeout thresholds to report (columns "1+ K" ... "12+ K").
+# Strikeout thresholds to report (columns "Prob 1+ K" ... "Prob 12+ K").
 THRESHOLDS = list(range(1, 13))
-PROB_COLS = [f"{j}+ K" for j in THRESHOLDS]
+PROB_COLS = [f"Prob {j}+ K" for j in THRESHOLDS]
 OUT_DIR = config.ROOT / "outputs" / "projections"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -86,6 +86,10 @@ def get_slate(date_iso: str) -> pd.DataFrame:
     d = datetime.strptime(date_iso, "%Y-%m-%d").strftime("%m/%d/%Y")
     games = statsapi.schedule(date=d)
 
+    # Full name -> club nickname ("Detroit Tigers" -> "Tigers") for display.
+    nick = {t["name"]: t["teamName"]
+            for t in statsapi.get("teams", {"sportId": 1})["teams"]}
+
     rows = []
     for gm in games:
         for side, opp_side in (("home", "away"), ("away", "home")):
@@ -94,8 +98,8 @@ def get_slate(date_iso: str) -> pd.DataFrame:
                 continue
             rows.append({
                 "pitcher_name": name.strip(),
-                "team": gm.get(f"{side}_name"),
-                "opponent": gm.get(f"{opp_side}_name"),
+                "team": nick.get(gm.get(f"{side}_name"), gm.get(f"{side}_name")),
+                "opponent": nick.get(gm.get(f"{opp_side}_name"), gm.get(f"{opp_side}_name")),
             })
 
     # Resolve MLBAM ids + jersey numbers (cache lookups to avoid duplicate calls).
@@ -152,17 +156,17 @@ def project(date_iso: str, df: pd.DataFrame | None = None) -> pd.DataFrame:
             k_rate, bf, src = lg_k_rate, lg_bf, "lg_avg"  # insufficient sample
 
         probs = threshold_probs(k_rate, bf)
-        num = r.get("number") or ""
         rec = {
-            "Pitcher": f"{r['pitcher_name']} #{num}" if num else r["pitcher_name"],
+            "#": r.get("number") or "",   # uniform number
+            "Pitcher": r["pitcher_name"],
             "Team": r["team"],
             "Opponent": r["opponent"],
-            "Exp K Rate": round(k_rate, 3),
-            "Exp BF": round(bf, 1),
+            "Mean Strikeouts": round(k_rate * bf, 2),
+            "Expected Batters Faced": round(bf, 1),
             "_exp_k": k_rate * bf,        # for sorting
             "_src": src,
         }
-        rec.update({f"{j}+ K": round(probs[j], 3) for j in THRESHOLDS})
+        rec.update({f"Prob {j}+ K": probs[j] for j in THRESHOLDS})
         records.append(rec)
 
     board = (pd.DataFrame(records)
@@ -177,12 +181,13 @@ def project(date_iso: str, df: pd.DataFrame | None = None) -> pd.DataFrame:
 # ----------------------------------------------------------------------------
 def _styled(board: pd.DataFrame):
     """Green-gradient styled HTML table matching the reference look."""
-    # Rank as a plain "#" column beside the pitcher (not a pandas index).
-    show = board.drop(columns=["_exp_k", "_src"]).reset_index(names="#")
+    show = board.drop(columns=["_exp_k", "_src"])
+    # Probabilities display capped at .999 — a projection is never a certainty.
+    fmt_prob = lambda v: f"{min(v, 0.999):.3f}"
     sty = (show.style
            .hide(axis="index")
-           .format({c: "{:.3f}" for c in PROB_COLS})
-           .format({"Exp K Rate": "{:.3f}", "Exp BF": "{:.1f}"})
+           .format({c: fmt_prob for c in PROB_COLS})
+           .format({"Mean Strikeouts": "{:.2f}", "Expected Batters Faced": "{:.1f}"})
            .background_gradient(cmap="Greens", subset=PROB_COLS, vmin=0, vmax=1)
            .set_caption("Projected Starting Pitcher Strikeouts")
            .set_table_attributes('style="border-collapse:collapse; width:100%; '
@@ -210,8 +215,8 @@ def run(date_iso: str, df: pd.DataFrame | None = None) -> pd.DataFrame:
     csv_path, html_path = save(board, date_iso)
 
     disp = board.drop(columns=["_exp_k", "_src"]).copy()
-    for c in PROB_COLS + ["Exp K Rate"]:
-        disp[c] = disp[c].map(lambda v: f"{v:.3f}")
+    for c in PROB_COLS:
+        disp[c] = disp[c].map(lambda v: f"{min(v, 0.999):.3f}")
     pd.set_option("display.max_columns", None, "display.width", 250)
     print(disp.to_string())
     print(f"\n[projections] {len(board)} starters | "
